@@ -208,7 +208,7 @@ class LoginButton extends StatelessWidget {
           onPressed: () {
             Get.offAll (()=>const Home());
           },
-          child: const Text("Login",style: TextStyle(color: Colors.black,fontSize:20 ),),
+          child:  Text('Login'.tr,style:const TextStyle(color: Colors.black,fontSize:20 ),),
           style: ButtonStyle(
             shape: WidgetStateProperty.all(
               RoundedRectangleBorder(

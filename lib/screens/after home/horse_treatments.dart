@@ -12,7 +12,7 @@ class MedicalRecordScreen extends StatefulWidget {
 
 class _MedicalRecordScreenState extends State<MedicalRecordScreen>
     with TickerProviderStateMixin {
-  final horseName = Get.find<HorseController>().selectedHorse.value;
+final horseName = Get.find<HorseController>().selectedHorse['name'];
 
   List<String> vaccinations = [];
   List<String> doctorVisits = [];
@@ -126,6 +126,8 @@ class _MedicalRecordScreenState extends State<MedicalRecordScreen>
         title: Text('$horseName Medical Records'),
         backgroundColor: Colors.teal.shade600,
         bottom: TabBar(
+          unselectedLabelColor: Colors.white,
+          
           controller: _tabController,
           indicatorColor: Colors.white,
           tabs: const [

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:login_ui_flutter/controllers/horse_controller.dart';
-import 'package:login_ui_flutter/screens/after%20home/Calander.dart';
-//import 'package:login_ui_flutter/screens/after%20home/DailyLogScreen.dart';
-import 'package:login_ui_flutter/screens/after%20home/E-commerce.dart';
-import 'package:login_ui_flutter/screens/after%20home/achievement_screen.dart';
-import 'package:login_ui_flutter/screens/after%20home/home_daily_data.dart';
-import 'package:login_ui_flutter/screens/after%20home/horse_book_screen.dart';
-import 'package:login_ui_flutter/screens/after%20home/horse_gallery_screen.dart';
-import 'package:login_ui_flutter/screens/after%20home/horse_treatments.dart';
-import 'package:login_ui_flutter/screens/after%20home/ocr_scanner_screen.dart';
-import 'package:login_ui_flutter/screens/after%20home/family_tree_screen.dart';
+import 'package:login_ui_flutter/screens/after home/Calander.dart';
+import 'package:login_ui_flutter/screens/after home/E-commerce.dart';
+import 'package:login_ui_flutter/screens/after home/achievement_screen.dart';
+import 'package:login_ui_flutter/screens/after home/home_daily_data.dart';
+import 'package:login_ui_flutter/screens/after home/horse_book_screen.dart';
+import 'package:login_ui_flutter/screens/after home/horse_gallery_screen.dart';
+import 'package:login_ui_flutter/screens/after home/horse_treatments.dart';
+import 'package:login_ui_flutter/screens/after home/ocr_scanner_screen.dart';
+import 'package:login_ui_flutter/screens/after home/family_tree_screen.dart';
 import 'package:login_ui_flutter/screens/before_Home/login.dart';
 import 'package:login_ui_flutter/screens/community/feed_screen.dart';
-import 'package:login_ui_flutter/screens/profile%20screens/account_screen.dart';
-import 'package:login_ui_flutter/screens/profile%20screens/horse_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:login_ui_flutter/screens/profile screens/account_screen.dart';
+import 'package:login_ui_flutter/screens/profile screens/horse_screen.dart';
 import 'package:login_ui_flutter/utils/constanst.dart';
-import 'package:get/get.dart';
-//import 'package:animate_do/animate_do.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -27,12 +25,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final horseController = Get.find<HorseController>();
   int currentIndex = 0;
-
-  List<String> horses = [];
-
-  final horseName = Get.find<HorseController>().selectedHorse.value;
-
 
   @override
   Widget build(BuildContext context) {
@@ -60,112 +54,78 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-           /* ListTile(
-              leading: const Icon(Icons.data_saver_off_sharp),
-              title: const Text('daily data '),
-              onTap: () {
-                Navigator.push(
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('Add New Horse'),
+              onTap: () async {
+                final newHorse = await Navigator.push<Map<String, dynamic>>(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => const DailyLogScreen()),
+                  MaterialPageRoute(builder: (_) => const Horse()),
                 );
+                if (newHorse != null && newHorse['name'] != null) {
+                  horseController.addHorse(newHorse);
+                  horseController.setHorse(newHorse);
+                }
               },
-            ),*/
+            ),
             ListTile(
               leading: const Icon(Icons.data_saver_off_sharp),
-              title: const Text(' Medical Care '),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const MedicalRecordScreen()),
-                );
-              },
+              title: const Text('Medical Care'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const MedicalRecordScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.shop),
-              title: const Text(' Shop'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HorseEcommerceScreen()),
-                );
-              },
+              title: const Text('Shop'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const HorseEcommerceScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.star_border_purple500_outlined),
-              title: const Text(' achievements'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const AchievementScreen()),
-                );
-              },
+              title: const Text('Achievements'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const AchievementScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.photo_album),
-              title: const Text(' gallery'),
+              title: const Text('Gallery'),
               onTap: () {
+                final horse = horseController.selectedHorse;
+                final horseName = horse['name']?.toString() ?? '';
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HorseGalleryScreen(
-                            horseName: '',
-                          )),
-                );
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => HorseGalleryScreen(horseName: horseName)));
               },
             ),
             ListTile(
               leading: const Icon(FontAwesomeIcons.tree),
-              title: const Text('family tree'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const FamilyTreeScreen()),
-                );
-              },
+              title: const Text('Family Tree'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const FamilyTreeScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.calendar_today),
               title: Text('calendar'.tr),
-              onTap: () {
-                Get.to(() => const CalendarScreen());
-              },
+              onTap: () => Get.to(() => const CalendarScreen()),
             ),
             ListTile(
               leading: const Icon(Icons.qr_code),
-              title: const Text('scanner'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const OcrScannerScreen()),
-                );
-              },
+              title: const Text('Scanner'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const OcrScannerScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.book_rounded),
-              title: const Text('book'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const HorseBookScreen()),
-                );
-              },
+              title: const Text('Book'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const HorseBookScreen())),
             ),
             ListTile(
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
-              onTap: () {
-                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
-              },
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen())),
             ),
           ],
         ),
@@ -183,20 +143,22 @@ class _HomeState extends State<Home> {
             ),
           ),
           centerTitle: true,
-          
-          title: Text(
-            '$horseName Health'.tr,
-            style: const TextStyle(
+          title: Obx(() {
+            final selected = horseController.selectedHorse;
+            final name = selected['name']?.toString() ?? 'Unnamed Horse';
+            return Text(
+              '$name Health',
+              style: const TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 0, 0, 0)),
-          ),
+                color: Colors.black,
+              ),
+            );
+          }),
           leading: Builder(
             builder: (context) => IconButton(
               icon: const Icon(Icons.menu),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
+              onPressed: () => Scaffold.of(context).openDrawer(),
             ),
           ),
         ),
@@ -204,45 +166,48 @@ class _HomeState extends State<Home> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 108, 111, 113), Color(0xFFC0D6DF)],
+            colors: [Color(0xFF6C6F71), Color(0xFFC0D6DF)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-        child: const DailyDataScreen(), // هنا بنستدعي التصميم اللي جهزناه فوق
+        child: Obx(() {
+          final name = horseController.selectedHorse['name']?.toString() ?? '';
+          return DailyDataHomeScreen(horseName: name);
+        }),
       ),
-
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.white,
         currentIndex: currentIndex,
         onTap: (int index) {
-          setState(() {
-            currentIndex = index;
-          });
-
           if (index == 1) {
             _showHorseList(context);
           } else if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FeedScreen()),
-            );
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const Horse()));
           } else if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AccountScreen()),
-            );
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const FeedScreen()));
+          } else if (index == 4) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const AccountScreen()));
           }
         },
         backgroundColor: t1,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Horses'),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Icon(Icons.h_plus_mobiledata, size: 30),
+            ),
+            label: '',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.groups), label: 'Community'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
@@ -250,18 +215,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildDataContainer(int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      height: 200,
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 1, 13, 42),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
-  }
-
   void _showHorseList(BuildContext context) {
+    final horseController = Get.find<HorseController>();
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -274,52 +229,22 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                "Select a Horse",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              const Text("Select a Horse",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: horses.length,
+                itemCount: horseController.horseList.length,
                 itemBuilder: (context, index) {
+                  final horse = horseController.horseList[index];
                   return ListTile(
                     leading: const Icon(Icons.pets),
-                    title: Text(horses[index]),
+                    title: Text(horse['name'] ?? 'Unnamed'),
                     onTap: () {
-                      Get.find<HorseController>().setHorse(horses[index]);
+                      horseController.setHorse(horse);
                       Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Horse(
-                            horseName: horses[index],
-                          ),
-                        ),
-                      );
                     },
                   );
-                },
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.add),
-                title: const Text("Add New Horse"),
-                onTap: () async {
-                  Navigator.pop(context);
-
-                  final newHorseName = await Navigator.push<String>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Horse(),
-                    ),
-                  );
-
-                  if (newHorseName != null && newHorseName.isNotEmpty) {
-                    setState(() {
-                      horses.add(newHorseName);
-                    });
-                  }
                 },
               ),
             ],

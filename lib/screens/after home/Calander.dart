@@ -32,7 +32,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final horseName = Get.find<HorseController>().selectedHorse.value;
+    final horse = Get.find<HorseController>().selectedHorse;
+    final String horseName = horse['name'] ?? 'No Horse';
 
     return Scaffold(
       backgroundColor: Colors.orange.shade50,
@@ -80,7 +81,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 ),
                 calendarBuilders: CalendarBuilders(
                   markerBuilder: (context, day, events) {
-                    if (_hasDataForSelectedHorse(day, horseName)) {
+                    final horse = Get.find<HorseController>().selectedHorse;
+                    final String name = horse['name'] ?? '';
+
+                    if (_hasDataForSelectedHorse(day, name)) {
                       return Positioned(
                         bottom: 1,
                         child: Container(
@@ -121,7 +125,8 @@ class DailyDataDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final horseName = Get.find<HorseController>().selectedHorse.value;
+    final horse = Get.find<HorseController>().selectedHorse;
+    final String horseName = horse['name'] ?? 'No Horse';
 
     return Scaffold(
       backgroundColor: Colors.orange.shade50,

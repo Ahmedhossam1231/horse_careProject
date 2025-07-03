@@ -13,15 +13,17 @@ class FamilyTreeScreen extends StatefulWidget {
 
 class _FamilyTreeScreenState extends State<FamilyTreeScreen> {
   final Map<String, List<List<Map<String, String>>>> horseGenerations = {};
-final String horseName = Get.find<HorseController>().selectedHorse.value;
+
+  late String horseName;
 
   @override
   void initState() {
     super.initState();
-    Obx(() {
-  final horseName = Get.find<HorseController>().selectedHorse.value;
-  return Text("Selected horse: $horseName");
-});
+
+    final selectedHorse = Get.find<HorseController>().selectedHorse;
+    horseName = selectedHorse['name'] ?? 'Unnamed';
+
+    // Initialize generations if not already
     horseGenerations.putIfAbsent(horseName, () => List.generate(6, (_) => []));
   }
 
@@ -32,7 +34,7 @@ final String horseName = Get.find<HorseController>().selectedHorse.value;
     return Scaffold(
       backgroundColor: const Color(0xFFE7EFF1),
       appBar: AppBar(
-        title: Text("family tree - $horseName"),
+        title: Text("Family Tree - $horseName"),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -61,7 +63,7 @@ final String horseName = Get.find<HorseController>().selectedHorse.value;
                   child: ListTile(
                     leading: const Icon(Icons.family_restroom, color: Colors.teal, size: 32),
                     title: Text(
-                      "Generation ${index + 1}\n ${currentGen.length} members",
+                      "Generation ${index + 1}\n${currentGen.length} members",
                       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     trailing: IconButton(
@@ -72,7 +74,8 @@ final String horseName = Get.find<HorseController>().selectedHorse.value;
                               final result = await Navigator.push<Map<String, String>>(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => FamilyTreeEntryScreen(generation: index + 1),
+                                  builder: (context) =>
+                                      FamilyTreeEntryScreen(generation: index + 1),
                                 ),
                               );
                               if (result != null) {
@@ -112,7 +115,7 @@ final String horseName = Get.find<HorseController>().selectedHorse.value;
           } else if (index == 1) {
             // Delete
             setState(() {
-              for (int i = 0; i < generations.length; i++) {
+              for (int i = generations.length - 1; i >= 0; i--) {
                 if (generations[i].isNotEmpty) {
                   generations[i].removeLast();
                   break;
@@ -161,15 +164,21 @@ final String horseName = Get.find<HorseController>().selectedHorse.value;
         children: [
           const Icon(Icons.pets, size: 40, color: Colors.white),
           const SizedBox(height: 8),
-          Text(data['name'] ?? 'Unknown',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-          Text(data['age'] ?? 'Unknown',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-          Text(data['relation'] ?? '',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+          Text(
+            data['name'] ?? 'Unknown',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          Text(
+            data['age'] ?? 'Unknown',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          Text(
+            data['relation'] ?? '',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
         ],
       ),
     );

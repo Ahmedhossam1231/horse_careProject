@@ -17,11 +17,9 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   List<Map<String, dynamic>> marketItems = [];
-  List<String> categories = ['Horse', 'Equipment'];
-  String selectedCategory = 'Horse';
+  Map<String, dynamic>? selectedHorse;
   File? selectedImage;
 
-  final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController descController = TextEditingController();
 
@@ -37,8 +35,8 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
 
-    // Load horses from HorseController
-    final horseController = Get.find<HorseController>();
+    // Load horses from HorseController into marketItems initially
+   /* final horseController = Get.find<HorseController>();
     for (var horse in horseController.horseList) {
       marketItems.add({
         'name': horse['name'],
@@ -47,13 +45,12 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
         'image': horse['image'],
         'type': 'Horse',
       });
-    }
+    }*/
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    nameController.dispose();
     priceController.dispose();
     descController.dispose();
     super.dispose();
@@ -68,20 +65,23 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
   }
 
   void addItemToMarket() {
-    if (selectedImage != null && nameController.text.isNotEmpty) {
+    if (selectedHorse != null && priceController.text.isNotEmpty) {
       marketItems.add({
-        'name': nameController.text,
+        'name': selectedHorse!['name'],
         'price': priceController.text,
         'desc': descController.text,
-        'image': selectedImage,
-        'type': selectedCategory,
+        'image': selectedImage ?? selectedHorse!['image'],
+        'type': 'Horse',
       });
-      nameController.clear();
+      // Reset form
+      selectedHorse = null;
       priceController.clear();
       descController.clear();
       selectedImage = null;
       setState(() {});
       _tabController.animateTo(0);
+    } else {
+      Get.snackbar('Error', 'Please select a horse and enter a price');
     }
   }
 
@@ -101,20 +101,23 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
           transitionDuration: const Duration(milliseconds: 600),
           closedColor: Colors.white,
           openColor: Colors.white,
-          closedBuilder: (context, openContainer) => ListTile(
-            onTap: openContainer,
+          closedBuilder: (context, action) => ListTile(
+            onTap: action,
             leading: CircleAvatar(
-              backgroundImage: item['image'] is File
-                  ? FileImage(item['image'])
-                  : NetworkImage(item['image']) as ImageProvider,
+              backgroundImage: item['image'] == null
+                  ? AssetImage('assets/images/default_avatar.png')
+                  : (item['image'] is File
+                      ? FileImage(item['image'])
+                      : NetworkImage(item['image']) as ImageProvider),
               radius: 28,
             ),
-            title: Text(item['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(item['name'] ?? 'No Name',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(item['desc'] ?? ''),
-            trailing: Text('\$${item['price']}'),
+            trailing: Text('\$${item['price'] ?? '0'}'),
           ),
-          openBuilder: (_, __) => Scaffold(
-            appBar: AppBar(title: Text(item['name'])),
+          openBuilder: (context, _action) => Scaffold(
+            appBar: AppBar(title: Text(item['name'] ?? 'No Name')),
             body: Padding(
               padding: const EdgeInsets.all(20),
               child: Column(
@@ -126,11 +129,14 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
                         : Image.network(item['image'], height: 200),
                   ),
                   const SizedBox(height: 20),
-                  Text("Category: ${item['type']}", style: const TextStyle(fontSize: 18)),
+                  Text("Category: ${item['type']}",
+                      style: const TextStyle(fontSize: 18)),
                   const SizedBox(height: 10),
-                  Text("Price: \$${item['price']}", style: const TextStyle(fontSize: 18)),
+                  Text("Price: \$${item['price']}",
+                      style: const TextStyle(fontSize: 18)),
                   const SizedBox(height: 10),
-                  Text("Description:", style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const Text("Description:",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(item['desc'] ?? 'No description')
                 ],
@@ -143,22 +149,29 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
   }
 
   Widget buildAddForm() {
+    final horseController = Get.find<HorseController>();
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListView(
         children: [
-          DropdownButtonFormField<String>(
-            value: selectedCategory,
-            items: categories
-                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                .toList(),
-            onChanged: (val) => setState(() => selectedCategory = val!),
-            decoration: const InputDecoration(labelText: 'Select Category'),
-          ),
-          const SizedBox(height: 14),
-          TextField(
-            controller: nameController,
-            decoration: const InputDecoration(labelText: 'Name'),
+          DropdownButtonFormField<Map<String, dynamic>>(
+            value: selectedHorse,
+            items: horseController.horseList.map((horse) {
+              return DropdownMenuItem<Map<String, dynamic>>(
+                value: horse,
+                child: Text(horse['name']),
+              );
+            }).toList(),
+            onChanged: (val) {
+              setState(() {
+                selectedHorse = val;
+                // Clear previous inputs except horse name
+                priceController.clear();
+                descController.clear();
+                selectedImage = null;
+              });
+            },
+            decoration: const InputDecoration(labelText: 'Select Horse'),
           ),
           const SizedBox(height: 14),
           TextField(
@@ -199,8 +212,9 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
         appBar: AppBar(
           backgroundColor: Colors.deepOrange,
           title: const Text("Horse Marketplace"),
-          bottom: const TabBar(
-            tabs: [
+          bottom: TabBar(
+            controller: _tabController,
+            tabs: const [
               Tab(icon: Icon(Icons.store), text: 'Market'),
               Tab(icon: Icon(Icons.add_circle), text: 'Add Item'),
             ],
@@ -216,7 +230,8 @@ class _HorseEcommerceScreenState extends State<HorseEcommerceScreen>
                   ? const Center(child: Text("No items yet"))
                   : ListView.builder(
                       itemCount: marketItems.length,
-                      itemBuilder: (context, index) => buildMarketCard(marketItems[index]),
+                      itemBuilder: (context, index) =>
+                          buildMarketCard(marketItems[index]),
                     ),
               buildAddForm(),
             ],

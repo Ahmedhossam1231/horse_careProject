@@ -32,8 +32,8 @@ class Horse extends StatefulWidget {
   @override
   _HorseState createState() => _HorseState();
 }
-final Map<String, Map<String, dynamic>> horseDailyData = {};
 
+final Map<String, Map<String, dynamic>> horseDailyData = {};
 
 class _HorseState extends State<Horse> with SingleTickerProviderStateMixin {
   late TextEditingController nameController;
@@ -71,7 +71,6 @@ class _HorseState extends State<Horse> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    
 
     _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
@@ -132,7 +131,7 @@ class _HorseState extends State<Horse> with SingleTickerProviderStateMixin {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-              colors: [t1, Color(0xFFC0D6DF)],
+                colors: [t1, Color(0xFFC0D6DF)],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
               ),
@@ -240,7 +239,23 @@ class _HorseState extends State<Horse> with SingleTickerProviderStateMixin {
                   onPressed: () {
                     String horseName = nameController.text.trim();
                     if (horseName.isNotEmpty) {
-                      Navigator.pop(context, horseName); // يرجّع الاسم للـ Home
+                      Navigator.pop(context, {
+                        'id': DateTime.now()
+                            .millisecondsSinceEpoch
+                            .toString(), // ID فريد
+                        'name': horseName,
+                        'gender': genderController.text,
+                        'birthDate': birthDateController.text,
+                        'breed': breedController.text,
+                        'coat': coatController.text,
+                        'medicalNotes': medicalNotesController.text,
+                        'countryOfBirth': countryOfBirthController.text,
+                        'color': colorController.text,
+                        'owner': ownerController.text,
+                        'nationalId': nationalIdController.text,
+                        'stableLocation': stableLocationController.text,
+                        'image': null,
+                      });
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(

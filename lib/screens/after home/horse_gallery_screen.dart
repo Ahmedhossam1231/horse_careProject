@@ -38,7 +38,7 @@ class _HorseGalleryScreenState extends State<HorseGalleryScreen> {
     Navigator.of(context as BuildContext).push(
       MaterialPageRoute(
         builder: (_) => Scaffold(
-          appBar: AppBar(title: const Text("Preview")),
+          appBar: AppBar(title:  Text('Preview'.tr)),
           body: Center(child: Image.file(File(path))),
         ),
       ),
@@ -47,7 +47,7 @@ class _HorseGalleryScreenState extends State<HorseGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
-      final horseName = Get.find<HorseController>().selectedHorse.value;
+final horseName = Get.find<HorseController>().selectedHorse['name'];
 
     return Scaffold(
       appBar: AppBar(

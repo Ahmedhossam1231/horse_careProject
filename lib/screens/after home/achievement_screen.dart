@@ -185,7 +185,8 @@ class _AchievementScreenState extends State<AchievementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final horseName = horseController.selectedHorse.value;
+    final horseName = horseController.selectedHorse['name']
+;
     final horse = horseController.horseList.firstWhereOrNull((h) => h['name'] == horseName);
     final imageFile = (horse != null && horse['image'] is File) ? horse['image'] as File : null;
     final displayName = (horse != null && horse['name'] is String) ? horse['name'] as String : 'Unnamed Horse';

@@ -6,11 +6,12 @@ plugins {
 }
 
 android {
-    ndkVersion = "29.0.13599879"
+    compileSdk = 34
+    ndkVersion = "27.0.12077973"
 
     namespace = "com.example.task_arrey"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

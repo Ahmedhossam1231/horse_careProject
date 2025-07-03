@@ -1,14 +1,13 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:login_ui_flutter/screens/before_Home/reset_code.dart';
-//
-import '../../utils/constanst.dart';
-import '../../widgets/rep_textfiled.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({Key? key}) : super(key: key);
+import 'package:login_ui_flutter/screens/before_Home/resetpass.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
+import '../../utils/constanst.dart';
+
+class ResetCodeScreen extends StatelessWidget {
+  const ResetCodeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +55,6 @@ class ForgotPasswordScreen extends StatelessWidget {
               SizedBox(height: 30),
               EmailTextFiled(),
               SizedBox(height: 50),
-              SubmitButton(),
             ],
           ),
         ),
@@ -66,59 +64,72 @@ class ForgotPasswordScreen extends StatelessWidget {
 }
 
 // Submit Button Components
-class SubmitButton extends StatelessWidget {
-  const SubmitButton({
-    Key? key,
-  }) : super(key: key);
+
+class EmailTextFiled extends StatelessWidget {
+  const EmailTextFiled({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return FadeInDown(
-      delay: const Duration(microseconds: 200),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 5),
-        width: gWidth,
-        height: gHeight / 15,
-        child: ElevatedButton(
-          onPressed: () {
-            Get.to(
-              () => const ResetCodeScreen(),
-              transition: Transition.leftToRight,
-            );
-          },
-          child: const Text("Submit",style: TextStyle(color: Colors.black,fontSize:20 ),),
-          style: ButtonStyle(
-            shape: WidgetStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+    return Column(
+      children: [
+        const SizedBox(height: 2),
+        FadeInDown(
+          delay: const Duration(milliseconds: 1400),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 5),
+            child: PinCodeTextField(
+              length: 6,
+              appContext: context,
+              obscureText: false,
+              keyboardType: TextInputType.number,
+              animationType: AnimationType.fade,
+              pinTheme: PinTheme(
+                shape: PinCodeFieldShape.box,
+                borderRadius: BorderRadius.circular(12),
+                fieldHeight: 55,
+                fieldWidth: 45,
+                activeFillColor: Colors.white,
+                selectedFillColor: Colors.grey.shade100,
+                inactiveFillColor: Colors.grey.shade100,
+                activeColor: buttonColor,
+                selectedColor:buttonColor,
+                inactiveColor: Colors.grey.shade400,
+                fieldOuterPadding: const EdgeInsets.symmetric(horizontal: 5),
               ),
+              enableActiveFill: true,
+              onChanged: (value) {},
             ),
-            backgroundColor: WidgetStateProperty.all(buttonColor),
           ),
         ),
-      ),
+        const SizedBox(height: 20),
+        FadeInUp(
+          delay: const Duration(milliseconds: 1600),
+          child: SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton(
+              onPressed: () {
+                Get.to(
+                  () => const ResetPasswordScreen(),
+                  transition: Transition.leftToRight,
+                );
+                Get.snackbar("Success", "Code Verified Successfully");
+              },
+              child: const Text("Verify Code", style: TextStyle(fontSize: 18, color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: buttonColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-// Email TextFiled Components
-class EmailTextFiled extends StatelessWidget {
-  const EmailTextFiled({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeInDown(
-      delay: const Duration(milliseconds: 600),
-      child:const  RepTextFiled(
-        icon: LineIcons.at,
-        text: "Email ID / Mobile number",
-        sufIcon: null,
-      ),
-    );
-  }
-}
 
 // Middle Text Components
 class MiddleText extends StatelessWidget {
@@ -135,7 +146,7 @@ class MiddleText extends StatelessWidget {
           width: gWidth,
           height: gHeight / 19,
           child: const Text(
-            "Don't worry! it happens. Please enter the address associated with you'r account.",
+                "Please enter the 6-digit code sent to your email.",
             style: TextStyle(color: text1Color, height: 1.2, wordSpacing: 2),
           )),
     );
@@ -158,7 +169,7 @@ class ForgotText extends StatelessWidget {
         height: gHeight / 8,
         child: const FittedBox(
           child: Text(
-            "Forgot\nPassword?",
+            "Verfication\nCode?",
             style: TextStyle(
               fontSize: 35,
               fontWeight: FontWeight.bold,

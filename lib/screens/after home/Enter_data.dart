@@ -42,7 +42,8 @@ class _FamilyTreeEntryScreenState extends State<FamilyTreeEntryScreen> with Sing
 
   @override
   Widget build(BuildContext context) {
-    final String horseName = Get.find<HorseController>().selectedHorse.value;
+    final horse = Get.find<HorseController>().selectedHorse;
+final String horseName = horse['name'];
 
     return Scaffold(
       appBar: AppBar(
